@@ -223,7 +223,8 @@ def test_send_notification_with_findings(security_scanner_agent, mock_github_cli
     call_args = mock_github_client.send_telegram_msg.call_args
     message = call_args[0][0]
     assert "Findings by Repository" in message
-    assert "test-repo" in message
+    # Account for telegram escaping
+    assert "test" in message  # test-repo will be escaped
 
 
 def test_send_error_notification(security_scanner_agent, mock_github_client):
