@@ -17,6 +17,11 @@ class SecurityScannerAgent(BaseAgent):
     Scans all GitHub repositories for exposed credentials using gitleaks.
     Sends sanitized reports to Telegram without revealing actual secret values.
     """
+    
+    # Configuration constants
+    MAX_FINDINGS_PER_REPO = 5  # Maximum findings to show per repository in report
+    MAX_REPOS_SHOWN = 10  # Maximum repositories to show in report
+    TRUNCATION_MARKER = "\\.\\.\\."  # Escaped dots for Telegram MarkdownV2
 
     @property
     def persona(self) -> str:
@@ -346,17 +351,14 @@ class SecurityScannerAgent(BaseAgent):
         )
         
         # Add findings by repository
-        MAX_FINDINGS_PER_REPO = 5
-        MAX_REPOS_SHOWN = 10
-        
         if results['repositories_with_findings']:
             summary_text += "\n\n⚠️ *Findings by Repository:*\n"
             
             repos_shown = 0
             for repo_data in results['repositories_with_findings']:
-                if repos_shown >= MAX_REPOS_SHOWN:
+                if repos_shown >= self.MAX_REPOS_SHOWN:
                     remaining = len(results['repositories_with_findings']) - repos_shown
-                    summary_text += f"\n\\.\\.\\. and {remaining} more repositories with findings\n"
+                    summary_text += f"\n{self.TRUNCATION_MARKER} and {remaining} more repositories with findings\n"
                     break
                 
                 repo_name = repo_data['repository']
@@ -367,9 +369,9 @@ class SecurityScannerAgent(BaseAgent):
                 
                 findings_shown = 0
                 for finding in findings:
-                    if findings_shown >= MAX_FINDINGS_PER_REPO:
+                    if findings_shown >= self.MAX_FINDINGS_PER_REPO:
                         remaining = len(findings) - findings_shown
-                        summary_text += f"  \\.\\.\\. and {remaining} more findings\n"
+                        summary_text += f"  {self.TRUNCATION_MARKER} and {remaining} more findings\n"
                         break
                     
                     rule_id = self._escape_telegram(finding['rule_id'])
@@ -392,7 +394,7 @@ class SecurityScannerAgent(BaseAgent):
                 summary_text += f"  • {self._escape_telegram(repo_short)}: {self._escape_telegram(error_msg)}\n"
                 if i >= 4 and len(results['scan_errors']) > 5:
                     remaining = len(results['scan_errors']) - 5
-                    summary_text += f"  \\.\\.\\. and {remaining} more errors\n"
+                    summary_text += f"  {self.TRUNCATION_MARKER} and {remaining} more errors\n"
                     break
         
         # Send to Telegram

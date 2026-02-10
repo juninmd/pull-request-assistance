@@ -1,5 +1,9 @@
 """
 Tests for SecurityScannerAgent.
+
+Note: SecurityScannerAgent scans ALL repositories owned by the target user,
+not limited by the allowlist. The allowlist parameter is still required by
+BaseAgent but is not used in the actual scanning logic.
 """
 import pytest
 from unittest.mock import Mock, MagicMock, patch
@@ -23,10 +27,15 @@ def mock_github_client():
 
 @pytest.fixture
 def mock_allowlist():
-    """Mock repository allowlist."""
+    """
+    Mock repository allowlist.
+    
+    Note: SecurityScannerAgent doesn't use the allowlist and scans ALL repos,
+    but BaseAgent requires it as a parameter.
+    """
     allowlist = Mock()
     allowlist.is_allowed = Mock(return_value=True)
-    allowlist.list_repositories = Mock(return_value=["juninmd/test-repo"])
+    allowlist.list_repositories = Mock(return_value=[])
     return allowlist
 
 
