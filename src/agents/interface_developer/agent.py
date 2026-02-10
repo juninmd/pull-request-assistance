@@ -55,10 +55,10 @@ class InterfaceDeveloperAgent(BaseAgent):
                 ui_analysis = self.analyze_ui_needs(repo)
 
                 if ui_analysis.get("has_ui_work"):
-                    task = self.create_ui_improvement_task(repo, ui_analysis)
+                    session = self.create_ui_improvement_task(repo, ui_analysis)
                     results["ui_tasks_created"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id"),
+                        "session_id": session.get("id"),
                         "improvements": ui_analysis.get("improvements", [])
                     })
                 else:
@@ -142,7 +142,7 @@ class InterfaceDeveloperAgent(BaseAgent):
             }
         )
 
-        return self.create_jules_task(
+        return self.create_jules_session(
             repository=repository,
             instructions=instructions,
             title=f"UI Enhancement for {repository}",

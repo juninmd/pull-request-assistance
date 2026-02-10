@@ -71,8 +71,8 @@ class TestSeniorDeveloperAgent(unittest.TestCase):
         self.assertTrue(result["needs_optimization"])
         self.assertIn("heavy utility library (lodash)", result["details"])
 
-    @patch.object(SeniorDeveloperAgent, 'create_jules_task')
-    def test_run_executes_all_analyses(self, mock_create_task):
+    @patch.object(SeniorDeveloperAgent, 'create_jules_session')
+    def test_run_executes_all_analyses(self, mock_create_session):
         # Mock all internal analyses to return 'needs action'
         self.agent.analyze_security = MagicMock(return_value={"needs_attention": True, "issues": ["Mock Issue"]})
         self.agent.analyze_cicd = MagicMock(return_value={"needs_improvement": True, "improvements": ["Mock Imp"]})
@@ -81,7 +81,7 @@ class TestSeniorDeveloperAgent(unittest.TestCase):
         self.agent.analyze_modernization = MagicMock(return_value={"needs_modernization": True, "details": "Mod details"})
         self.agent.analyze_performance = MagicMock(return_value={"needs_optimization": True, "details": "Perf details"})
         
-        mock_create_task.return_value = {"task_id": "mock_id"}
+        mock_create_session.return_value = {"id": "mock_session_id"}
         
         # Patch load_jules_instructions to avoid file I/O errors in test
         with patch.object(self.agent, 'load_jules_instructions', return_value="mock instructions"):

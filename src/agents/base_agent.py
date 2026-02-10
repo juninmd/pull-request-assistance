@@ -200,7 +200,7 @@ class BaseAgent(ABC):
         """
         print(f"[{self.name}] [{level}] {message}")
 
-    def create_jules_task(
+    def create_jules_session(
         self,
         repository: str,
         instructions: str,
@@ -208,25 +208,26 @@ class BaseAgent(ABC):
         wait_for_completion: bool = False
     ) -> Dict[str, Any]:
         """
-        Create a Jules task with agent's persona context.
+        Create a Jules session with agent's persona context.
+
+        Uses the v1alpha sessions API with AUTO_CREATE_PR mode.
 
         Args:
-            repository: Target repository
+            repository: Target repository (e.g., 'owner/repo')
             instructions: Task instructions
-            title: Task title
-            wait_for_completion: Whether to wait for task completion
+            title: Session title
+            wait_for_completion: Whether to wait for session completion
 
         Returns:
-            Task result
+            Session result with 'id' and 'name'
         """
         if not self.can_work_on_repository(repository):
             raise ValueError(f"Repository {repository} is not in the allowlist")
 
-        self.log(f"Creating Jules task for {repository}: {title}")
+        self.log(f"Creating Jules session for {repository}: {title}")
 
-        # Inject agent persona into instructions
-        full_instructions = f"""
-# Agent Context
+        # Inject agent persona into the prompt
+        prompt = f"""# Agent Context
 Persona: {self.persona}
 Mission: {self.mission}
 
@@ -234,19 +235,19 @@ Mission: {self.mission}
 {instructions}
 """
 
-        result = self.jules_client.create_pull_request_task(
+        result = self.jules_client.create_pull_request_session(
             repository=repository,
-            feature_description=full_instructions,
-            agent_persona=self.persona
+            prompt=prompt,
+            title=title
         )
 
-        task_id = result.get("task_id")
-        self.log(f"Created task {task_id}")
+        session_id = result.get("id")
+        self.log(f"Created session {session_id}")
 
-        if wait_for_completion and task_id:
-            self.log(f"Waiting for task {task_id} to complete...")
-            result = self.jules_client.wait_for_task_completion(task_id)
-            self.log(f"Task {task_id} completed with status: {result.get('status')}")
+        if wait_for_completion and session_id:
+            self.log(f"Waiting for session {session_id} to complete...")
+            result = self.jules_client.wait_for_session(session_id)
+            self.log(f"Session {session_id} completed")
 
         return result
 

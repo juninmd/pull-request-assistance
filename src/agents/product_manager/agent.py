@@ -91,7 +91,7 @@ class ProductManagerAgent(BaseAgent):
         roadmap_instructions = self.generate_roadmap_instructions(repository, analysis)
 
         # Create Jules task to generate/update ROADMAP.md
-        task = self.create_jules_task(
+        session = self.create_jules_session(
             repository=repository,
             instructions=roadmap_instructions,
             title=f"Update Product Roadmap for {repository}",
@@ -100,7 +100,7 @@ class ProductManagerAgent(BaseAgent):
 
         return {
             "repository": repository,
-            "task_id": task.get("task_id"),
+            "session_id": session.get("id"),
             "analysis_summary": analysis.get("summary", ""),
             "priority_count": len(analysis.get("priorities", []))
         }

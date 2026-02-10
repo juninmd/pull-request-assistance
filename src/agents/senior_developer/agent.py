@@ -62,56 +62,56 @@ class SeniorDeveloperAgent(BaseAgent):
                 # Check for security issues
                 security_analysis = self.analyze_security(repo)
                 if security_analysis.get("needs_attention"):
-                    task = self.create_security_task(repo, security_analysis)
+                    session = self.create_security_task(repo, security_analysis)
                     results["security_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id")
+                        "session_id": session.get("id")
                     })
 
                 # Check CI/CD setup
                 cicd_analysis = self.analyze_cicd(repo)
                 if cicd_analysis.get("needs_improvement"):
-                    task = self.create_cicd_task(repo, cicd_analysis)
+                    session = self.create_cicd_task(repo, cicd_analysis)
                     results["cicd_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id")
+                        "session_id": session.get("id")
                     })
 
                 # Check for roadmap features to implement
                 feature_analysis = self.analyze_roadmap_features(repo)
                 if feature_analysis.get("has_features"):
-                    task = self.create_feature_implementation_task(repo, feature_analysis)
+                    session = self.create_feature_implementation_task(repo, feature_analysis)
                     results["feature_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id"),
+                        "session_id": session.get("id"),
                         "features_count": len(feature_analysis.get("features", []))
                     })
 
                 # Tech Debt Analysis
                 tech_debt_analysis = self.analyze_tech_debt(repo)
                 if tech_debt_analysis.get("needs_attention"):
-                    task = self.create_tech_debt_task(repo, tech_debt_analysis)
+                    session = self.create_tech_debt_task(repo, tech_debt_analysis)
                     results["tech_debt_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id")
+                        "session_id": session.get("id")
                     })
 
                 # Modernization Analysis
                 modernization_analysis = self.analyze_modernization(repo)
                 if modernization_analysis.get("needs_modernization"):
-                    task = self.create_modernization_task(repo, modernization_analysis)
+                    session = self.create_modernization_task(repo, modernization_analysis)
                     results["modernization_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id")
+                        "session_id": session.get("id")
                     })
 
                 # Performance Analysis
                 performance_analysis = self.analyze_performance(repo)
                 if performance_analysis.get("needs_optimization"):
-                    task = self.create_performance_task(repo, performance_analysis)
+                    session = self.create_performance_task(repo, performance_analysis)
                     results["performance_tasks"].append({
                         "repository": repo,
-                        "task_id": task.get("task_id")
+                        "session_id": session.get("id")
                     })
 
             except Exception as e:
@@ -342,7 +342,7 @@ class SeniorDeveloperAgent(BaseAgent):
                 "details": analysis.get("details", "General code quality improvements.")
             }
         )
-        return self.create_jules_task(repository=repository, instructions=instructions, title=f"Tech Debt Cleanup for {repository}")
+        return self.create_jules_session(repository=repository, instructions=instructions, title=f"Tech Debt Cleanup for {repository}")
 
     def create_modernization_task(self, repository: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Create Jules task for code modernization."""
@@ -353,7 +353,7 @@ class SeniorDeveloperAgent(BaseAgent):
                 "details": analysis.get("details", "Migrate legacy patterns to modern standards.")
             }
         )
-        return self.create_jules_task(repository=repository, instructions=instructions, title=f"Modernization for {repository}")
+        return self.create_jules_session(repository=repository, instructions=instructions, title=f"Modernization for {repository}")
 
     def create_performance_task(self, repository: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Create Jules task for performance optimization."""
@@ -364,7 +364,7 @@ class SeniorDeveloperAgent(BaseAgent):
                 "details": analysis.get("details", "Identify and fix performance bottlenecks.")
             }
         )
-        return self.create_jules_task(repository=repository, instructions=instructions, title=f"Performance Tuning for {repository}")
+        return self.create_jules_session(repository=repository, instructions=instructions, title=f"Performance Tuning for {repository}")
 
     def create_security_task(self, repository: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Create Jules task for security improvements."""
@@ -378,7 +378,7 @@ class SeniorDeveloperAgent(BaseAgent):
             }
         )
 
-        return self.create_jules_task(
+        return self.create_jules_session(
             repository=repository,
             instructions=instructions,
             title=f"Security Hardening for {repository}"
@@ -396,7 +396,7 @@ class SeniorDeveloperAgent(BaseAgent):
             }
         )
 
-        return self.create_jules_task(
+        return self.create_jules_session(
             repository=repository,
             instructions=instructions,
             title=f"CI/CD Pipeline for {repository}"
@@ -417,7 +417,7 @@ class SeniorDeveloperAgent(BaseAgent):
             }
         )
 
-        return self.create_jules_task(
+        return self.create_jules_session(
             repository=repository,
             instructions=instructions,
             title=f"Feature Implementation for {repository}"
