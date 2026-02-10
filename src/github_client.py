@@ -37,6 +37,12 @@ class GithubClient:
         """
         return issue.as_pull_request()
 
+    def get_repo(self, repo_name):
+        """
+        Gets a repository object by name.
+        """
+        return self.g.get_repo(repo_name)
+
     def merge_pr(self, pr):
         try:
             pr.merge()
