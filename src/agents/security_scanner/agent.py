@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 from typing import Dict, Any, List
 from datetime import datetime
+from urllib.parse import quote
 from src.agents.base_agent import BaseAgent
 
 
@@ -377,10 +378,14 @@ class SecurityScannerAgent(BaseAgent):
                     line = finding['line']
                     commit = finding.get('commit', 'main')
                     
-                    # Generate GitHub blob URL
-                    github_url = f"https://github\\.com/{self._escape_telegram(repo_name)}/blob/{commit}/{file_path}\\#L{line}"
+                    # Generate GitHub blob URL with proper URL encoding
+                    # URL-encode the file path for use in the URL
+                    encoded_file_path = quote(file_path, safe='/')
+                    # Escape characters for Telegram MarkdownV2 in URL context
+                    # In MarkdownV2, URLs in markdown links don't need as much escaping
+                    github_url = f"https://github.com/{repo_name}/blob/{commit}/{encoded_file_path}#L{line}"
                     
-                    summary_text += f"  • [{self._escape_telegram(rule_id)}]({github_url})\n"
+                    summary_text += f"  • [{rule_id}]({github_url})\n"
                     findings_shown += 1
                 
                 repos_shown += 1
