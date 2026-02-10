@@ -166,8 +166,11 @@ def test_scan_repository_clone_failure(mock_run, mock_temp_dir, security_scanner
     """Test handling of repository clone failure."""
     mock_temp_dir.return_value.__enter__.return_value = "/tmp/test"
     
-    # Mock git clone failure
-    mock_run.return_value = Mock(returncode=1, stderr="Clone failed")
+    # Mock git clone failure with stderr that might contain sensitive data
+    mock_run.return_value = Mock(
+        returncode=1, 
+        stderr="fatal: could not read Username for 'https://x-access-token:ghs_SECRET@github.com'"
+    )
     
     with patch.dict('os.environ', {'GITHUB_TOKEN': 'test-token'}):
         result = security_scanner_agent._scan_repository("juninmd/test-repo")
@@ -176,6 +179,9 @@ def test_scan_repository_clone_failure(mock_run, mock_temp_dir, security_scanner
     assert result["error"] is not None
     assert "Clone failed" in result["error"]
     assert "exit code" in result["error"]  # Updated to match new error message
+    # Verify no sensitive data in error message
+    assert "SECRET" not in result["error"]
+    assert "x-access-token" not in result["error"]
 
 
 def test_send_notification_no_findings(security_scanner_agent, mock_github_client):

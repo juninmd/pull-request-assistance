@@ -147,6 +147,7 @@ class SecurityScannerAgent(BaseAgent):
                 
                 if clone_result.returncode != 0:
                     # Don't include full stderr as it might contain URL with token
+                    # Git clone errors may expose the repository URL which contains the access token
                     result["error"] = f"Clone failed with exit code {clone_result.returncode}"
                     return result
                 
