@@ -36,7 +36,7 @@ class RepositoryAllowlist:
             if allowlist_file.exists():
                 with open(allowlist_file, 'r') as f:
                     data = json.load(f)
-                    self._repositories = set(data.get("repositories", []))
+                    self._repositories = set(r.lower().strip() for r in data.get("repositories", []))
                     print(f"Loaded {len(self._repositories)} repositories from allowlist")
             else:
                 print(f"Allowlist file not found at {self.allowlist_path}. Using empty allowlist.")
