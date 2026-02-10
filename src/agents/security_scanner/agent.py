@@ -98,11 +98,12 @@ class SecurityScannerAgent(BaseAgent):
                 self.log("Gitleaks installed successfully")
                 return True
             else:
-                self.log(f"Failed to install gitleaks: {result.stderr}", "ERROR")
+                # Don't log stderr to avoid potential sensitive data
+                self.log("Failed to install gitleaks", "ERROR")
                 return False
                 
         except Exception as e:
-            self.log(f"Error installing gitleaks: {e}", "ERROR")
+            self.log(f"Error installing gitleaks: {type(e).__name__}", "ERROR")
             return False
 
     def _scan_repository(self, repo_name: str) -> Dict[str, Any]:
@@ -145,7 +146,8 @@ class SecurityScannerAgent(BaseAgent):
                 )
                 
                 if clone_result.returncode != 0:
-                    result["error"] = f"Clone failed: {clone_result.stderr}"
+                    # Don't include full stderr as it might contain URL with token
+                    result["error"] = f"Clone failed with exit code {clone_result.returncode}"
                     return result
                 
                 # Run gitleaks scan
@@ -169,7 +171,8 @@ class SecurityScannerAgent(BaseAgent):
                 # Gitleaks returns exit code 1 if leaks are found, 0 if no leaks
                 # We only treat other exit codes as errors
                 if gitleaks_result.returncode not in [0, 1]:
-                    result["error"] = f"Gitleaks scan failed: {gitleaks_result.stderr}"
+                    # Don't include stderr as it might contain sensitive data
+                    result["error"] = f"Gitleaks scan failed with exit code {gitleaks_result.returncode}"
                     return result
                 
                 # Parse results if report file exists

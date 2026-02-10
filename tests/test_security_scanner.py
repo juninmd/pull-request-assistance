@@ -175,6 +175,7 @@ def test_scan_repository_clone_failure(mock_run, mock_temp_dir, security_scanner
     assert result["scanned"] is False
     assert result["error"] is not None
     assert "Clone failed" in result["error"]
+    assert "exit code" in result["error"]  # Updated to match new error message
 
 
 def test_send_notification_no_findings(security_scanner_agent, mock_github_client):
