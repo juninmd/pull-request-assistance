@@ -388,7 +388,6 @@ class SecurityScannerAgent(BaseAgent):
                     
                     rule_id = self._escape_telegram(finding['rule_id'])
                     file_path = finding['file']
-                    file_path_escaped = self._escape_telegram(file_path)
                     line = finding['line']
                     commit = finding.get('commit')
                     
