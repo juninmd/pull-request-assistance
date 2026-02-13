@@ -376,7 +376,7 @@ class SecurityScannerAgent(BaseAgent):
                     file_path_raw = finding['file']
                     file_path_escaped = self._escape_telegram(file_path_raw)
                     line = finding['line']
-                    commit = finding.get('commit', '')
+                    commit = finding.get('commit')
                     
                     # Generate GitHub permalink using commit hash (not default branch)
                     # This ensures the link points to the exact version where the secret was found
