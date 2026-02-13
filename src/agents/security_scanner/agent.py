@@ -373,17 +373,19 @@ class SecurityScannerAgent(BaseAgent):
                         break
                     
                     rule_id = self._escape_telegram(finding['rule_id'])
-                    file_path = self._escape_telegram(finding['file'])
+                    file_path_raw = finding['file']
+                    file_path_escaped = self._escape_telegram(file_path_raw)
                     line = finding['line']
                     commit = finding.get('commit', '')
                     
                     # Generate GitHub permalink using commit hash (not default branch)
                     # This ensures the link points to the exact version where the secret was found
                     if commit:
-                        github_url = f"https://github\\.com/{self._escape_telegram(repo_name)}/blob/{commit}/{file_path}\\#L{line}"
-                        summary_text += f"  • `{rule_id}` in [{file_path}:{line}]({github_url})\n"
+                        # URL should NOT be escaped (only the display text)
+                        github_url = f"https://github.com/{repo_name}/blob/{commit}/{file_path_raw}#L{line}"
+                        summary_text += f"  • `{rule_id}` in [{file_path_escaped}:{line}]({github_url})\n"
                     else:
-                        summary_text += f"  • `{rule_id}` in `{file_path}:{line}`\n"
+                        summary_text += f"  • `{rule_id}` in `{file_path_escaped}:{line}`\n"
                     findings_shown += 1
                 
                 repos_shown += 1
