@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 import os
-from src.ai_client import GeminiClient, OllamaClient
+from src.ai_client import GeminiClient, OllamaClient, get_ai_client
 
 class TestGeminiClient(unittest.TestCase):
     def setUp(self):
@@ -10,9 +10,10 @@ class TestGeminiClient(unittest.TestCase):
 
     @patch("src.ai_client.genai.Client")
     def test_initialization(self, mock_client_cls):
-        client = GeminiClient(api_key=self.api_key)
+        client = GeminiClient(api_key=self.api_key, model="gemini-test")
         mock_client_cls.assert_called_with(api_key=self.api_key)
         self.assertEqual(client.client, mock_client_cls.return_value)
+        self.assertEqual(client.model, "gemini-test")
 
     @patch("src.ai_client.genai.Client")
     def test_resolve_conflict(self, mock_client_cls):
@@ -92,6 +93,40 @@ class TestOllamaClient(unittest.TestCase):
 
         result = self.client.generate_pr_comment("issue")
         self.assertEqual(result, "")
+
+class TestFactory(unittest.TestCase):
+    def test_get_gemini_default(self):
+        settings = MagicMock()
+        settings.ai_provider = "gemini"
+        settings.gemini_api_key = "key"
+        settings.ai_model = None # Should default
+
+        with patch("src.ai_client.genai.Client"):
+            client = get_ai_client(settings)
+            self.assertIsInstance(client, GeminiClient)
+            self.assertEqual(client.model, "gemini-2.5-flash")
+
+    def test_get_gemini_custom(self):
+        settings = MagicMock()
+        settings.ai_provider = "gemini"
+        settings.gemini_api_key = "key"
+        settings.ai_model = "gemini-pro"
+
+        with patch("src.ai_client.genai.Client"):
+            client = get_ai_client(settings)
+            self.assertIsInstance(client, GeminiClient)
+            self.assertEqual(client.model, "gemini-pro")
+
+    def test_get_ollama(self):
+        settings = MagicMock()
+        settings.ai_provider = "ollama"
+        settings.ollama_base_url = "http://ollama"
+        settings.ollama_model = "llama2"
+
+        client = get_ai_client(settings)
+        self.assertIsInstance(client, OllamaClient)
+        self.assertEqual(client.base_url, "http://ollama")
+        self.assertEqual(client.model, "llama2")
 
 if __name__ == '__main__':
     unittest.main()

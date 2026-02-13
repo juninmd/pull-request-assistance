@@ -35,6 +35,7 @@ class PRAssistantAgent(BaseAgent):
         *args,
         target_owner: str = "juninmd",
         allowed_authors: list = None,
+        ai_client: Optional[Any] = None,
         **kwargs
     ):
         """
@@ -43,6 +44,7 @@ class PRAssistantAgent(BaseAgent):
         Args:
             target_owner: GitHub username to monitor
             allowed_authors: List of trusted PR authors
+            ai_client: AIClient instance for autonomous operations
         """
         super().__init__(*args, name="pr_assistant", **kwargs)
         self.target_owner = target_owner
@@ -56,7 +58,7 @@ class PRAssistantAgent(BaseAgent):
             "google-labs-jules"
         ]
         # Initialize AI Client for autonomous operations
-        self.ai_client = GeminiClient()
+        self.ai_client = ai_client or GeminiClient()
 
 
     def _escape_telegram(self, text: str) -> str:

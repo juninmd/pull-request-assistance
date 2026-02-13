@@ -4,6 +4,7 @@ from src.agents.pr_assistant import PRAssistantAgent
 from src.github_client import GithubClient
 from src.jules import JulesClient
 from src.config import RepositoryAllowlist, Settings
+from src.ai_client import get_ai_client
 
 def main():
     """
@@ -22,12 +23,16 @@ def main():
         # PR Assistant works on ALL repositories owned by target_owner
         allowlist = RepositoryAllowlist(settings.repository_allowlist_path)
 
+        # Create AI client
+        ai_client = get_ai_client(settings)
+
         # Create and run PR Assistant (works on ALL repositories)
         agent = PRAssistantAgent(
             jules_client=jules_client,
             github_client=github_client,
             allowlist=allowlist,
-            target_owner=settings.github_owner
+            target_owner=settings.github_owner,
+            ai_client=ai_client
         )
         agent.run()
     except Exception as e:
