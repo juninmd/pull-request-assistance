@@ -61,6 +61,7 @@ def test_extract_coverage():
 
         assert _extract_coverage("Coverage is invalid%") is None
 
+
 def test_check_pipeline_status_coverage_from_statuses():
     pr = MagicMock()
     repo = pr.base.repo
@@ -80,6 +81,7 @@ def test_check_pipeline_status_coverage_from_statuses():
     result = check_pipeline_status(pr)
     assert len(result["coverage"]) == 1
     assert result["coverage"][0]["coverage"] == 90.5
+
 
 def test_check_pipeline_status_success_no_statuses():
     pr = MagicMock()
