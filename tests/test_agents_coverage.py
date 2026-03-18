@@ -280,11 +280,12 @@ class TestAgentsCoverage(unittest.TestCase):
 
     def test_secret_remover_find_latest_results(self):
         from src.agents.secret_remover.agent import SecretRemoverAgent
+        from unittest.mock import mock_open
         agent = SecretRemoverAgent(self.jules_client, self.github_client, self.allowlist, telegram=self.telegram)
 
         with patch("os.getenv") as mock_getenv, \
              patch("glob.glob") as mock_glob, \
-             patch("src.agents.secret_remover.agent.open") as mock_open, \
+             patch("builtins.open", mock_open(read_data="{}")), \
              patch("json.load") as mock_json_load:
 
             # Line 126: Test RESULTS_DIR env var
@@ -301,11 +302,12 @@ class TestAgentsCoverage(unittest.TestCase):
 
     def test_secret_remover_find_latest_results_malformed(self):
         from src.agents.secret_remover.agent import SecretRemoverAgent
+        from unittest.mock import mock_open
         agent = SecretRemoverAgent(self.jules_client, self.github_client, self.allowlist, telegram=self.telegram)
 
         with patch("os.getenv", return_value=None), \
              patch("glob.glob") as mock_glob, \
-             patch("src.agents.secret_remover.agent.open") as mock_open, \
+             patch("builtins.open", mock_open(read_data="{}")), \
              patch("json.load") as mock_json_load:
 
             # Give it two candidate files
