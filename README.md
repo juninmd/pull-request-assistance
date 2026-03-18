@@ -18,7 +18,7 @@ The application allows you to seamlessly configure the AI provider and the under
 
 - `AI_PROVIDER`: The AI provider you want to use. Supported values are:
   - `gemini` (defaults to model: `gemini-2.5-flash`)
-  - `ollama` (defaults to model: `llama3`)
+  - `ollama` (defaults to model: `qwen3:1.7b`)
   - `openai` (defaults to model: `gpt-4o`)
 - `AI_MODEL`: (Optional) Overrides the base model for the selected provider.
 
