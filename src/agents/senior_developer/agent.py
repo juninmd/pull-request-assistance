@@ -35,9 +35,9 @@ class SeniorDeveloperAgent(BaseAgent):
         **kwargs
     ):
         super().__init__(*args, name="senior_developer", **kwargs)
-        ai_config = ai_config or {}
-        ai_config["model"] = ai_model
-        self.ai_client = get_ai_client(ai_provider, **ai_config)
+        config = (ai_config or {}).copy()
+        config["model"] = ai_model
+        self.ai_client = get_ai_client(ai_provider, **config)
 
     def run(self) -> dict[str, Any]:
         """
