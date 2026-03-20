@@ -91,7 +91,7 @@ class Settings:
             raise ValueError(f"AI_PROVIDER must be one of: {supported}")
 
         # Determine default model based on provider if not explicitly set
-        default_model = DEFAULT_MODELS.get(provider, "gemini-2.5-flash")
+        default_model = DEFAULT_MODELS.get(provider, DEFAULT_MODELS["gemini"])
         ai_model = os.getenv("AI_MODEL", default_model).strip() or default_model
 
         return cls(
