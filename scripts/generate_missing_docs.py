@@ -79,7 +79,11 @@ def main():
             # File does not exist
             pass
         except GithubException as e:
-            if e.status == 404 and isinstance(e.data, dict) and "empty" in e.data.get("message", "").lower():
+            if (
+                e.status == 404
+                and isinstance(e.data, dict)
+                and "empty" in e.data.get("message", "").lower()
+            ):
                 print("  -> Repository is empty, skipping.")
                 continue
             raise e
