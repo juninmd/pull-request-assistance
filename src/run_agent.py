@@ -140,7 +140,7 @@ def run_pr_assistant(pr_ref: Optional[str] = None, ai_provider: Optional[str] = 
         model = ai_model
     elif ai_provider and ai_provider != settings.ai_provider:
         # If provider is overridden via CLI but model isn't, use the default for that provider
-        model = DEFAULT_MODELS.get(ai_provider, "gemini-2.5-flash")
+        model = DEFAULT_MODELS.get(ai_provider, DEFAULT_MODELS["gemini"])
     else:
         # Otherwise fall back to settings (which already handles defaults for the env var provider)
         model = settings.ai_model
