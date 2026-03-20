@@ -1,7 +1,10 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from src.agents.ci_health.agent import CIHealthAgent
 from src.agents.ci_health.utils import create_issue_for_pipeline, remediate_pipeline
+from src.config.settings import Settings
+
 
 class TestCIHealthAgent(unittest.TestCase):
     def setUp(self):
@@ -35,6 +38,8 @@ class TestCIHealthAgent(unittest.TestCase):
 
         mock_remediate.return_value = {"repository": "owner/repo", "session_id": "123"}
         agent._allowed_repositories = MagicMock(return_value=["owner/repo"])
+        agent.ai_provider = "mock"
+        agent.ai_model = "mock"
 
         result = agent.run()
         self.assertEqual(len(result["fix_actions"]), 1)
@@ -65,6 +70,8 @@ class TestCIHealthAgent(unittest.TestCase):
 
         mock_remediate.return_value = {"repository": "owner/repo", "issue_url": "http://issue"}
         agent._allowed_repositories = MagicMock(return_value=["owner/repo"])
+        agent.ai_provider = "mock"
+        agent.ai_model = "mock"
 
         result = agent.run()
         self.assertEqual(len(result["fix_actions"]), 1)
@@ -95,6 +102,8 @@ class TestCIHealthAgent(unittest.TestCase):
 
         mock_remediate.side_effect = Exception("Test Exception")
         agent._allowed_repositories = MagicMock(return_value=["owner/repo"])
+        agent.ai_provider = "mock"
+        agent.ai_model = "mock"
 
         result = agent.run()
         self.assertEqual(len(result["fix_actions"]), 0)
