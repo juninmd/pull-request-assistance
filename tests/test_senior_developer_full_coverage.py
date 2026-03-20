@@ -49,7 +49,7 @@ class TestSeniorDeveloperFullCoverage(unittest.TestCase):
     def test_analyzer_cicd_missing_workflows_line52(self):
         # We want to cover line 52: `if not workflows: improvements.append("No GitHub Actions workflows found")`
         mock_repo = MagicMock()
-        mock_repo.get_contents.side_effect = lambda path: [] if path == ".github/workflows" else ["test"]
+        mock_repo.get_contents.side_effect = lambda path: [] if path == ".github/workflows" else [MagicMock(name="test_dir")]
         self.mock_github.get_repo.return_value = mock_repo
 
         res = self.agent.analyzer.analyze_cicd("repo")
